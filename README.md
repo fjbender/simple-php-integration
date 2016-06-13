@@ -6,6 +6,8 @@
 * A PAYONE account or test account ( https://www.payone.de/kontakt/ )
 
 ##Communication principles
+
+![preauth-capture diagram](https://raw.githubusercontent.com/fjbender/simple-php-integration/master/images/payone_preauth_capture.png)
 Communication from your server to our platform is performed by sending key-value-pairs per HTTP Post over a secure channel. In return, your application will receive a response string containing the result of your request. For sending the request to us, we recommend using a cURL wrapper that sends an array as key-value-pairs. The response are key value pairs delimited by EOL breaks, which can easily be parsed into an array. See Payone.php for Details.
 
 For a detailed description of every parameter please refer to the Server API Description.
@@ -105,6 +107,7 @@ The sequencenumber parameter ensures that all transaction status notifications h
 This intro is just the tip of the iceberg. For online bank transfer like Sofort.com, for instance, you'll need to redirect the customer to an URL specified in the response. For credit card processing, you'll need to setup a HTML container for input fields made available through our invisible iFrame integration and make sure your system never comes in contact with genuine credit card data. PAYONE will provide you with a pseudo card number that you can use to preauthorize and capture transactions just like in the examples above.
 
 ##Redirect payment methods
+![redirect diagram](https://raw.githubusercontent.com/fjbender/simple-php-integration/master/images/redirect.png)
 Sometimes, payment methods require information from the customer on 3rd party websites. Usually this is the case if the customer needs to enter transaction credentials, such as username/password or a TAN. Once you have acquainted yourself with the basic transaction principles outlined in the 1 Getting started tutorial, you're ready to tackle these payment methods. This is, again, a three step process: Preparing the (pre-)authorization, redirecting the customer, and verifying the transaction status.
 
 ##Preparing the authorization
