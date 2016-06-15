@@ -8,6 +8,7 @@
 ##Communication principles
 
 ![preauth-capture diagram](https://raw.githubusercontent.com/fjbender/simple-php-integration/master/images/payone_preauth_capture.png)
+
 Communication from your server to our platform is performed by sending key-value-pairs per HTTP Post over a secure channel. In return, your application will receive a response string containing the result of your request. For sending the request to us, we recommend using a cURL wrapper that sends an array as key-value-pairs. The response are key value pairs delimited by EOL breaks, which can easily be parsed into an array. See Payone.php for Details.
 
 For a detailed description of every parameter please refer to the Server API Description.
@@ -108,6 +109,7 @@ This intro is just the tip of the iceberg. For online bank transfer like Sofort.
 
 ##Redirect payment methods
 ![redirect diagram](https://raw.githubusercontent.com/fjbender/simple-php-integration/master/images/redirect.png)
+
 Sometimes, payment methods require information from the customer on 3rd party websites. Usually this is the case if the customer needs to enter transaction credentials, such as username/password or a TAN. Once you have acquainted yourself with the basic transaction principles outlined in the 1 Getting started tutorial, you're ready to tackle these payment methods. This is, again, a three step process: Preparing the (pre-)authorization, redirecting the customer, and verifying the transaction status.
 
 ##Preparing the authorization
@@ -146,7 +148,7 @@ $onlineTransfer = array(
     "request" => "authorization", // create account receivable and instantly book the amount
     "onlinebanktransfertype" => "PNT", // this is the type for Sofort.com
     "bankcountry" => "DE", // we need to know the country of the customer's bank, i.e. of the invoice address
-    "iban" => "DE85123456782599100003", // as of now, we need to know the IBAN an BIC of the customer to start a Sofort transaction
+    "iban" => "DE85123456782599100003", // as of now, we need to know the IBAN an BIC, to be removed
     "bic" => "TESTTEST",
     "successurl" => "https://yourshop/payment/success?reference=your_unique_reference",
     "errorurl" => "https://yourshop/payment/error?reference=your_unique_reference",
@@ -348,7 +350,7 @@ $request = array_merge($defaults, $personalData, $creditCard);
 $response = Payone::doCurl($request);
 if ($response["status"] == "REDIRECT") { // this happens when the card needs a 3d secure verification
     header("Location: " . $response["redirecturl"]); // or other redirect method
-} elseif ($response["status"] == "APPOINTED") { // no 3d secure verification required, transaction went through
+} elseif ($response["status"] == "APPROVED") { // no 3d secure verification required, transaction went through
     echo "Thank you for your purchase.";
 } else {
     echo "There has been an error processing your request.";
