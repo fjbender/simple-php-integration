@@ -148,8 +148,11 @@ $onlineTransfer = array(
     "request" => "authorization", // create account receivable and instantly book the amount
     "onlinebanktransfertype" => "PNT", // this is the type for Sofort.com
     "bankcountry" => "DE", // we need to know the country of the customer's bank, i.e. of the invoice address
-    "iban" => "DE85123456782599100003", // as of now, we need to know the IBAN an BIC, to be removed
-    "bic" => "TESTTEST",
+    /**
+     * As of July 2016, IBAN and BIC are optional for Sofort transactions as long as we get a bankcountry
+     */
+    //"iban" => "DE85123456782599100003", 
+    //"bic" => "TESTTEST",
     "successurl" => "https://yourshop/payment/success?reference=your_unique_reference",
     "errorurl" => "https://yourshop/payment/error?reference=your_unique_reference",
     "backurl" => "https://yourshop/payment/back?reference=your_unique_reference"
