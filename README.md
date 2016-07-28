@@ -113,7 +113,7 @@ This intro is just the tip of the iceberg. For online bank transfer like Sofort.
 Sometimes, payment methods require information from the customer on 3rd party websites. Usually this is the case if the customer needs to enter transaction credentials, such as username/password or a TAN. Once you have acquainted yourself with the basic transaction principles outlined in the 1 Getting started tutorial, you're ready to tackle these payment methods. This is, again, a three step process: Preparing the (pre-)authorization, redirecting the customer, and verifying the transaction status.
 
 ##Preparing the authorization
-For the authorization, we'll rely on the Payone::doCurl() function as before. So first, we need the $defaults and $personalData arrays:
+For the authorization, we'll rely on the `Payone::doCurl()` function as before. So first, we need the `$defaults` and `$personalData` arrays:
 ```php
 $defaults = array(
     "aid" => "your_account_id",
