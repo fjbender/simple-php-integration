@@ -9,7 +9,7 @@
 
 ![preauth-capture diagram](https://raw.githubusercontent.com/fjbender/simple-php-integration/master/images/payone_preauth_capture.png)
 
-Communication from your server to our platform is performed by sending key-value-pairs per HTTP Post over a secure channel. In return, your application will receive a response string containing the result of your request. For sending the request to us, we recommend using a cURL wrapper that sends an array as key-value-pairs. The response are key value pairs delimited by EOL breaks, which can easily be parsed into an array. See Payone.php for Details.
+Communication from your server to our platform is performed by sending key-value-pairs per HTTP Post over a secure channel. In return, your application will receive a response string containing the result of your request. For sending the request to us, we recommend using a cURL wrapper that sends an array as key-value-pairs. The response are key value pairs delimited by EOL breaks, which can easily be parsed into an array. See `Payone.php` for Details.
 
 For a detailed description of every parameter please refer to the Server API Description.
 
@@ -56,16 +56,16 @@ $prepayment = array(
     "request" => "preauthorization" // create account receivable
 );
 ```
-Then, the request can easily be merged together and sent to the platform using the simple functions from above:
+Then, the request can easily be merged together and sent to the platform using the simple functions from the `Payone` class:
 ```php
 $request = array_merge($defaults, $personalData, $prepayment);
 $response = Payone::doCurl($request);
 ```
 
-You'll receive a status response informing you whether the request was successful and if not, about the cause of the error. However, if your API credentials were correct, you'll have received a status=APPROVED response. In any successful response you'll always receive a transaction ID parameter txid. This parameter is vital for any further communication about that transaction. Specifically to the prepayment clearing type, you'll receive bank account details. The customer has to know these bank account details to be able to wire the money to that account.
+You'll receive a status response informing you whether the request was successful and if not, about the cause of the error. However, if your API credentials were correct, you'll have received a `status=APPROVED` response. In any successful response you'll always receive a transaction ID parameter txid. This parameter is vital for any further communication about that transaction. Specifically to the prepayment clearing type, you'll receive bank account details. The customer has to know these bank account details to be able to wire the money to that account.
 
 ##Waiting for payment confirmation
-Depending on the payment method chosen, the confirmation of the customer's payment can be instant or take up to several days. Once we have new information about the transaction, we'll send a transaction status query to the URL configured in the PAYONE Merchant Interface. This status notification should be processed by your application in a separate controller, which should only be accessible from our platform (i.e. only from our IPv4 subnet). To prevent any tampering with the notification and minimize the danger of man-in-the-middle attacks, we highly recommend making this controller available through a secure connection only. Our platform expects a TSOK string as a confirmation that the notification has been received, if the TSOK hasn't been sent within 10 seconds, our platform will abandon the notification and try again at a later time.
+Depending on the payment method chosen, the confirmation of the customer's payment can be instant or take up to several days. Once we have new information about the transaction, we'll send a transaction status query to the URL configured in the PAYONE Merchant Interface. This status notification should be processed by your application in a separate controller, which should only be accessible from our platform (i.e. only from our IPv4 subnet). To prevent any tampering with the notification and minimize the danger of man-in-the-middle attacks, we highly recommend making this controller available through a secure connection only. Our platform expects a `TSOK` string as a confirmation that the notification has been received, if the `TSOK` hasn't been sent within 10 seconds, our platform will abandon the notification and try again at a later time.
 ```php
 // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
 if ($_POST["key"] == hash("md5", $defaults["key"])) {
@@ -102,7 +102,7 @@ if ($response["status"] == "APPROVED") {
 }
 ```
 
-The sequencenumber parameter ensures that all transaction status notifications have been processed before new requests can be sent to our API. It is incremented with each pair of request and transaction status notification. For the preauthorization request it is always implied as 0 and must not be sent.
+The `sequencenumber` parameter ensures that all transaction status notifications have been processed before new requests can be sent to our API. It is incremented with each pair of request and transaction status notification. For the `preauthorization` request it is always implied as 0 and must not be sent.
 
 ##Where to go from here
 This intro is just the tip of the iceberg. For online bank transfer like Sofort.com, for instance, you'll need to redirect the customer to an URL specified in the response. For credit card processing, you'll need to setup a HTML container for input fields made available through our invisible iFrame integration and make sure your system never comes in contact with genuine credit card data. PAYONE will provide you with a pseudo card number that you can use to preauthorize and capture transactions just like in the examples above.
@@ -174,11 +174,11 @@ else {
 }
 ```
 
-After the customer completed the transaction on the 3rd party site, they'll be redirected to the successurl so be sure to inform them about the success of their order. However, the order is not quite finished yet.
+After the customer completed the transaction on the 3rd party site, they'll be redirected to the `successurl` so be sure to inform them about the success of their order. However, the order is not quite finished yet.
 
 ##Making sure everything is present and accounted for
 
-However, to prevent people with fraudulent intentions from directly calling the successurl, you can't rely on it alone. Additionally, PAYONE will sent a transaction status notification to the shop to indicate that the payment transaction has been completed. When verifying the transaction status take care to validate the key and probably the source IPv4 subnet as well. However, you won't receive a txaction=paid notification right away but rather a txaction=appointed to indicate that the transaction has been triggered and will be marked paid in a couple of minutes:
+However, to prevent people with fraudulent intentions from directly calling the `successurl`, you can't rely on it alone. Additionally, PAYONE will sent a transaction status notification to the shop to indicate that the payment transaction has been completed. When verifying the transaction status take care to validate the key and probably the source IPv4 subnet as well. However, you won't receive a `txaction=paid` notification right away but rather a `txaction=appointed` to indicate that the transaction has been triggered and will be marked paid in a couple of minutes:
 ```php
 // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
 if ($_POST["key"] == hash("md5", $defaults["key"])) {
@@ -207,7 +207,7 @@ The token is a so called pseudo card PAN, a number that resembles a credit card 
 To avoid the software on the server to come in contact with credit card data, the Client API is used for communication between the buyer's browser and PAYONE.
 
 ##Build the form
-PAYONE's "Hosted iFrame" solution gives the merchant the most flexibility in designing the checkout form while at the same time being PCI DSS compliant. The actual <input> elements are loaded from a secure PAYONE system so that the shop software itself isn't in the scope of PCI DSS certification. First, we need a sceleton of the form:
+PAYONE's "Hosted iFrame" solution gives the merchant the most flexibility in designing the checkout form while at the same time being PCI DSS compliant. The actual `<input>` elements are loaded from a secure PAYONE system so that the shop software itself isn't in the scope of PCI DSS certification. First, we need a sceleton of the form:
 ```html
 <script type="text/javascript" src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js"></script>
 <form name="paymentform" action="" method="post">
@@ -362,6 +362,6 @@ if ($response["status"] == "REDIRECT") { // this happens when the card needs a 3
 }
 ```
 
-If the card requires 3D Secure verification, our platform will respond with a REDIRECT and give the URL the 3D Secure verification has to be carried out. After the customer successfully completed the 3D Secure form, we will send a transaction status notification "APPOINTED" and then redirect them to the URL stated in the successurl parameter. The transaction status notification coming in before the redirect to the successurl asserts that the customer has indeed completed their 3D Secure form.
+If the card requires 3D Secure verification, our platform will respond with a `status=redirect` response and give the URL the 3D Secure verification has to be carried out. After the customer successfully completed the 3D Secure form, we will send a transaction status notification `appointed` and then redirect them to the URL stated in the `successurl` parameter. The transaction status notification coming in before the redirect to the `successurl` asserts that the customer has indeed completed their 3D Secure form.
 
 After the preauthorization is completed, you can continue with the transaction e.g. by capturing the full or a partial amount.
