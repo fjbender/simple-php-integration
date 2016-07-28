@@ -65,7 +65,7 @@ $response = Payone::doCurl($request);
 You'll receive a status response informing you whether the request was successful and if not, about the cause of the error. However, if your API credentials were correct, you'll have received a status=APPROVED response. In any successful response you'll always receive a transaction ID parameter txid. This parameter is vital for any further communication about that transaction. Specifically to the prepayment clearing type, you'll receive bank account details. The customer has to know these bank account details to be able to wire the money to that account.
 
 ##Waiting for payment confirmation
-Depending on the payment method chosen, the confirmation of the customer's payment can be instant or take up to several days. Once we have new information about the transaction, we'll send a transaction status query to the URL configured in the PAYONE Merchant Interface. This status notification should be processed by your application in a separate controller, which should only be accessible from our platform (i.e. only from our IPv4 subnet). Our platform expects a TSOK string as a confirmation that the notification has been received, if the TSOK hasn't been sent within 10 seconds, our platform will abandon the notification and try again at a later time.
+Depending on the payment method chosen, the confirmation of the customer's payment can be instant or take up to several days. Once we have new information about the transaction, we'll send a transaction status query to the URL configured in the PAYONE Merchant Interface. This status notification should be processed by your application in a separate controller, which should only be accessible from our platform (i.e. only from our IPv4 subnet). To prevent any tampering with the notification and minimize the danger of man-in-the-middle attacks, we highly recommend making this controller available through a secure connection only. Our platform expects a TSOK string as a confirmation that the notification has been received, if the TSOK hasn't been sent within 10 seconds, our platform will abandon the notification and try again at a later time.
 ```php
 // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
 if ($_POST["key"] == hash("md5", $defaults["key"])) {
@@ -198,9 +198,11 @@ if ($_POST["key"] == hash("md5", $defaults["key"])) {
 
 Online payments with credit cards are de facto mandatory for every online shop. However, the credit card issuers have high requirements concerning the security of credit card transactions. The [Payment Card Industry Data Security Standard](https://www.pcisecuritystandards.org/minisite/en/) (PCI DSS) defines the prerequisites and certification steps. As certification is quite complex for merchants, PAYONE developed a solution that only requires the lowest level of PCI DSS compliance.
 Essentially, processing a credit card transaction is a three step process:
+
 1. Create the form to capture the credit card details
 2. Send them to PAYONE and receive a token in a callback
 3. Perform (pre-)authorization using the token
+
 The token is a so called pseudo card PAN, a number that resembles a credit card number, so that 3rd party systems can use it, but doesn't entail the PCI DSS requirements for storing card data.
 To avoid the software on the server to come in contact with credit card data, the Client API is used for communication between the buyer's browser and PAYONE.
 
@@ -360,4 +362,6 @@ if ($response["status"] == "REDIRECT") { // this happens when the card needs a 3
 }
 ```
 
-Following this request you can continue with the transaction, i.e. Transaction Status validation and capture.
+If the card requires 3D Secure verification, our platform will respond with a REDIRECT and give the URL the 3D Secure verification has to be carried out. After the customer successfully completed the 3D Secure form, we will send a transaction status notification "APPOINTED" and then redirect them to the URL stated in the successurl parameter. The transaction status notification coming in before the redirect to the successurl asserts that the customer has indeed completed their 3D Secure form.
+
+After the preauthorization is completed, you can continue with the transaction e.g. by capturing the full or a partial amount.
