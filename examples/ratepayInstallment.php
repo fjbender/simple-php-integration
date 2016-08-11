@@ -28,7 +28,7 @@ $defaults = array(
     "mid" => "your_merchant_id",
     "portalid" => "your_portal_id",
     "key" => hash("md5", "your_secret_portal_key"), // the key has to be hashed as md5
-    "api_version" => "3.8",
+    "api_version" => "3.10",
     "mode" => "test", // can be "live" for actual transactions
     "encoding" => "UTF-8"
 );
