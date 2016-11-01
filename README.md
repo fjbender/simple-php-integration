@@ -365,3 +365,8 @@ if ($response["status"] == "REDIRECT") { // this happens when the card needs a 3
 If the card requires 3D Secure verification, our platform will respond with a `status=redirect` response and give the URL the 3D Secure verification has to be carried out. After the customer successfully completed the 3D Secure form, we will send a transaction status notification `appointed` and then redirect them to the URL stated in the `successurl` parameter. The transaction status notification coming in before the redirect to the `successurl` asserts that the customer has indeed completed their 3D Secure form.
 
 After the preauthorization is completed, you can continue with the transaction e.g. by capturing the full or a partial amount.
+
+##Examples
+
+There are some handy examples in the [examples folder](https://github.com/fjbender/simple-php-integration/tree/master/examples). You're welcome to add more, if you feel like it!
+
