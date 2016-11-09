@@ -50,7 +50,7 @@ $genericPayment = array(
 $request = array_merge($defaults, $personalData, $genericPayment);
 ksort($request);
 print_r($request);
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 print_r($response);
 
 /**
@@ -94,7 +94,7 @@ $articles = array(
 $request = array_merge($defaults, $parameters, $personalData, $articles, $workorderid);
 ksort($request);
 print_r($request);
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 print_r($response);
 
 echo "Sleeping 3 seconds before capture...";
@@ -117,5 +117,5 @@ $parameters = array(
 $request = array_merge($defaults, $parameters);
 ksort($request);
 print_r($request);
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 print_r($response);

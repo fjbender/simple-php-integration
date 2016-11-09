@@ -57,5 +57,5 @@ print_r($request);
  *  [userid] => 90737467
  * )
  */
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 print_r($response);

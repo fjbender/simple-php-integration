@@ -60,7 +60,7 @@ print_r($request);
 /**
  * This would happen in the background, e.g. in an AJAX call
  */
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 
 print_r($response);
 echo "Sleeping 3 Seconds...\n";
@@ -129,7 +129,7 @@ $articles = array(
 $request = array_merge($defaults, $parameters, $personalData, $articles);
 ksort($request);
 print_r($request);
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 print_r($response);
 
 /**
@@ -156,5 +156,5 @@ $parameters = array(
 $request = array_merge($defaults, $parameters, $articles);
 ksort($request);
 print_r($request);
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 print_r($response);

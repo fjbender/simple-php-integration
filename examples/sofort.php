@@ -62,7 +62,7 @@ print_r($request);
  *   [userid] => 9000000
  * )
  */
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 print_r($response);
 
 

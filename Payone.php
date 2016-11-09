@@ -22,6 +22,9 @@
  * @author Florian Bender <florian.bender@payone.de>
  * @author Timo Kuchel <timo.kuchel@payone.de>
  */
+
+require 'vendor/autoload.php';
+
 /**
  * Class Payone
  */
@@ -36,24 +39,22 @@ class Payone {
      * performing the curl POST request to the PAYONE platform
      *
      * @param array $request
+     * @throws Exception
      * @return array
      */
-    public static function doCurl($request)
+    public static function sendRequest($request)
     {
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, self::PAYONE_SERVER_API_URL);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $client = new \GuzzleHttp\Client();
 
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $request);
-
-        curl_setopt($curl, CURLOPT_HEADER, false);
         echo "Requesting...";
         $begin = microtime(true);
-        if ($response = curl_exec($curl)) {
+
+        if ($response = $client->request('POST', self::PAYONE_SERVER_API_URL, ['form_params' => $request])) {
             $return = self::parseResponse($response);
+        } else {
+            throw new Exception('Something went wrong during the HTTP request.');
         }
-        curl_close($curl);
+
         $end = microtime(true);
         $duration = $end - $begin;
         echo "done.\n";
@@ -64,13 +65,14 @@ class Payone {
     /**
      * gets response string an puts it into an array
      *
-     * @param string $response
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @throws Exception
      * @return array
      */
-    public static function parseResponse($response)
+    public static function parseResponse(\Psr\Http\Message\ResponseInterface $response)
     {
         $responseArray = array();
-        $explode = explode(PHP_EOL, $response);
+        $explode = explode(PHP_EOL, $response->getBody());
         foreach ($explode as $e) {
             $keyValue = explode("=", $e);
             if (trim($keyValue[0]) != "") {
@@ -83,6 +85,10 @@ class Payone {
                     $responseArray[$key] = $value;
                 }
             }
+        }
+        if ($responseArray['status'] == "ERROR") {
+            $msg = "Payone returned an error:\n" . print_r($responseArray, true);
+            throw new Exception($msg);
         }
         return $responseArray;
     }

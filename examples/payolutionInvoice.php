@@ -27,7 +27,7 @@ $personalData = array(
     "title" => "Dr.",
     "firstname" => "Paul",
     "lastname" => "Neverpayer",
-    "street" => "Fraunhofer Straße 2-4",
+    "street" => "Fraunhofer Straï¿½e 2-4",
     "addressaddition" => "EG",
     "zip" => "24118",
     "city" => "Kiel",
@@ -78,7 +78,7 @@ $genericPayment = array(
 $request = array_merge($defaults, $personalData, $genericPayment);
 ksort($request); // just for readability
 print_r($request);
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 print_r($response);
 // @TODO: Handle genericPayment response here and abort order if request is denied
 
@@ -90,7 +90,7 @@ $workorderid["workorderid"] = $response["workorderid"]; // we need to store the 
 $request = array_merge($defaults, $parameters, $personalData, $articles, $workorderid);
 ksort($request);
 print_r($request);
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 print_r($response);
 
 echo "Sleeping 3 seconds before capture...";
@@ -111,5 +111,5 @@ $parameters = array(
 $request = array_merge($defaults, $parameters);
 ksort($request);
 print_r($request);
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 print_r($response);

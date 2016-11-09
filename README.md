@@ -1,9 +1,9 @@
 #A simple PAYONE integration in PHP
 
 ##Prerequisites
-* PHP 5.4 or higher ( https://secure.php.net/ )
-* cURL PHP extension ( http://php.net/manual/de/book.curl.php )
-* A PAYONE account or test account ( https://www.payone.de/kontakt/ )
+* PHP 5.4 or higher (https://secure.php.net/)
+* Composer (https://getcomposer.org/download/)
+* A PAYONE account or test account (https://www.payone.de/kontakt/)
 
 ##Communication principles
 
@@ -59,7 +59,7 @@ $prepayment = array(
 Then, the request can easily be merged together and sent to the platform using the simple functions from the `Payone` class:
 ```php
 $request = array_merge($defaults, $personalData, $prepayment);
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 ```
 
 You'll receive a status response informing you whether the request was successful and if not, about the cause of the error. However, if your API credentials were correct, you'll have received a `status=APPROVED` response. In any successful response you'll always receive a transaction ID parameter txid. This parameter is vital for any further communication about that transaction. Specifically to the prepayment clearing type, you'll receive bank account details. The customer has to know these bank account details to be able to wire the money to that account.
@@ -82,6 +82,7 @@ if ($_POST["key"] == hash("md5", $defaults["key"])) {
     }
 }
 ```
+N.B. our platform does not follow HTTP 30x or any other form of redirects.
 
 ##Booking the amount, capturing the funds
 
@@ -96,7 +97,7 @@ $capture = array(
     "currency" => "EUR"
 );
 $request = array_merge($defaults, $capture);
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 if ($response["status"] == "APPROVED") {
     // order is paid, amount is booked, ship the item!
 }
@@ -113,7 +114,7 @@ This intro is just the tip of the iceberg. For online bank transfer like Sofort.
 Sometimes, payment methods require information from the customer on 3rd party websites. Usually this is the case if the customer needs to enter transaction credentials, such as username/password or a TAN. Once you have acquainted yourself with the basic transaction principles outlined in the 1 Getting started tutorial, you're ready to tackle these payment methods. This is, again, a three step process: Preparing the (pre-)authorization, redirecting the customer, and verifying the transaction status.
 
 ##Preparing the authorization
-For the authorization, we'll rely on the `Payone::doCurl()` function as before. So first, we need the `$defaults` and `$personalData` arrays:
+For the authorization, we'll rely on the `Payone::sendRequest()` function as before. So first, we need the `$defaults` and `$personalData` arrays:
 ```php
 $defaults = array(
     "aid" => "your_account_id",
@@ -165,7 +166,7 @@ The URL parameters determine to which page the customer gets redirected as soon 
 Once you have prepared all the parameters needed for that transaction you're ready to authorize the transaction and then redirect the customer. We'll merge the arrays into one request, send the request to PAYONE, and see whether we get a status=REDIRECT response:
 ```php
 $request = array_merge($defaults, $personalData, $onlineTransfer);
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 if ($response["status"] == "REDIRECT") {
     header("Location: " . $response["redirecturl"]); // or other redirect method
 }
@@ -352,7 +353,7 @@ $creditCard = array(
 );
 
 $request = array_merge($defaults, $personalData, $creditCard);
-$response = Payone::doCurl($request);
+$response = Payone::sendRequest($request);
 if ($response["status"] == "REDIRECT") { // this happens when the card needs a 3d secure verification
     header("Location: " . $response["redirecturl"]); // or other redirect method
 } elseif ($response["status"] == "APPROVED") { // no 3d secure verification required, transaction went through
@@ -370,3 +371,14 @@ After the preauthorization is completed, you can continue with the transaction e
 
 There are some handy examples in the [examples folder](https://github.com/fjbender/simple-php-integration/tree/master/examples). You're welcome to add more, if you feel like it!
 
+##Try it out
+
+If you want to try out the examples provided here with your own account credentials, please install the required libraries through composer first:
+
+```
+git clone https://github.com/fjbender/simple-php-integration
+cd simple-php-integration/
+composer install
+```
+
+Then, adapt the individual files in `examples/` to your needs. 
