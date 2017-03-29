@@ -1,11 +1,11 @@
-#A simple PAYONE integration in PHP
+# A simple PAYONE integration in PHP
 
-##Prerequisites
+## Prerequisites
 * PHP 5.4 or higher (https://secure.php.net/)
 * Composer (https://getcomposer.org/download/)
 * A PAYONE account or test account (https://www.payone.de/kontakt/)
 
-##Communication principles
+## Communication principles
 
 ![preauth-capture diagram](https://raw.githubusercontent.com/fjbender/simple-php-integration/master/images/payone_preauth_capture.png)
 
@@ -13,7 +13,7 @@ Communication from your server to our platform is performed by sending key-value
 
 For a detailed description of every parameter please refer to the Server API Description.
 
-##Default parameters
+## Default parameters
 For every request to our platform, a set of default parameters is needed:
 ```php
 $defaults = array(
@@ -44,7 +44,7 @@ $personalData = array(
 ```
 For details about the individual parameters and more parameters that are available but not listed here, please refer to the Server API Description.
 
-##Initiating a payment request
+## Initiating a payment request
 
 Usually, processing payment is a three step process. In the first step, the account receivable is initiated. During the second step, we wait for the payment to be asynchronously confirmed, if applicable. Then, in a final step, the receivable is booked and the money collected. The following data is needed to complete our initiation request:
 ```php
@@ -64,7 +64,7 @@ $response = Payone::sendRequest($request);
 
 You'll receive a status response informing you whether the request was successful and if not, about the cause of the error. However, if your API credentials were correct, you'll have received a `status=APPROVED` response. In any successful response you'll always receive a transaction ID parameter txid. This parameter is vital for any further communication about that transaction. Specifically to the prepayment clearing type, you'll receive bank account details. The customer has to know these bank account details to be able to wire the money to that account.
 
-##Waiting for payment confirmation
+## Waiting for payment confirmation
 Depending on the payment method chosen, the confirmation of the customer's payment can be instant or take up to several days. Once we have new information about the transaction, we'll send a transaction status query to the URL configured in the PAYONE Merchant Interface. This status notification should be processed by your application in a separate controller, which should only be accessible from our platform (i.e. only from our IPv4 subnet). To prevent any tampering with the notification and minimize the danger of man-in-the-middle attacks, we highly recommend making this controller available through a secure connection only. Our platform expects a `TSOK` string as a confirmation that the notification has been received, if the `TSOK` hasn't been sent within 10 seconds, our platform will abandon the notification and try again at a later time.
 ```php
 // you'll need to include the $defaults array somehow, or at least get the key from a secret configuration file
@@ -84,7 +84,7 @@ if ($_POST["key"] == hash("md5", $defaults["key"])) {
 ```
 N.B. our platform does not follow HTTP 30x or any other form of redirects.
 
-##Booking the amount, capturing the funds
+## Booking the amount, capturing the funds
 
 Once the transaction has been paid, the funds can be captured and the order is ready for shipping. Capturing indicates that the order should be finalized in terms of bookkeeping and, if applicable, that the money can be transferred (i.e. for credit card payments or direct debit, see below):
 ```php
@@ -105,15 +105,15 @@ if ($response["status"] == "APPROVED") {
 
 The `sequencenumber` parameter ensures that all transaction status notifications have been processed before new requests can be sent to our API. It is incremented with each pair of request and transaction status notification. For the `preauthorization` request it is always implied as 0 and must not be sent.
 
-##Where to go from here
+## Where to go from here
 This intro is just the tip of the iceberg. For online bank transfer like Sofort.com, for instance, you'll need to redirect the customer to an URL specified in the response. For credit card processing, you'll need to setup a HTML container for input fields made available through our invisible iFrame integration and make sure your system never comes in contact with genuine credit card data. PAYONE will provide you with a pseudo card number that you can use to preauthorize and capture transactions just like in the examples above.
 
-##Redirect payment methods
+## Redirect payment methods
 ![redirect diagram](https://raw.githubusercontent.com/fjbender/simple-php-integration/master/images/redirect.png)
 
 Sometimes, payment methods require information from the customer on 3rd party websites. Usually this is the case if the customer needs to enter transaction credentials, such as username/password or a TAN. Once you have acquainted yourself with the basic transaction principles outlined in the 1 Getting started tutorial, you're ready to tackle these payment methods. This is, again, a three step process: Preparing the (pre-)authorization, redirecting the customer, and verifying the transaction status.
 
-##Preparing the authorization
+## Preparing the authorization
 For the authorization, we'll rely on the `Payone::sendRequest()` function as before. So first, we need the `$defaults` and `$personalData` arrays:
 ```php
 $defaults = array(
@@ -162,7 +162,7 @@ $onlineTransfer = array(
 As a change, we'll be using `"request" => "authorization"` here, which means that not only the account receivable is created but also instantly booked. This is possible because Sofort.com provides instant notification about a successful payment and it saves you the hassle of implementing a separate `"request" => "capture"`. For rather asynchronous payment methods like prepayment or invoice this is not possible. Refer to the Server API Description for details. However, you are free to use a preauthorization/capture setup here as well if you see fit, for instance for bookkeeping reasons.
 The URL parameters determine to which page the customer gets redirected as soon as they a) complete the transaction (successurl), b) the transaction fails (errorurl) and the customer is advised to choose a different payment method or try again, or c) the customer hits "Back to shop" or any similar button on the 3rd party site to get back to the payment method selector (backurl). These controllers need to be implemented by you.
 
-##Sending the authorization and redirecting the customer
+## Sending the authorization and redirecting the customer
 Once you have prepared all the parameters needed for that transaction you're ready to authorize the transaction and then redirect the customer. We'll merge the arrays into one request, send the request to PAYONE, and see whether we get a status=REDIRECT response:
 ```php
 $request = array_merge($defaults, $personalData, $onlineTransfer);
@@ -177,7 +177,7 @@ else {
 
 After the customer completed the transaction on the 3rd party site, they'll be redirected to the `successurl` so be sure to inform them about the success of their order. However, the order is not quite finished yet.
 
-##Making sure everything is present and accounted for
+## Making sure everything is present and accounted for
 
 However, to prevent people with fraudulent intentions from directly calling the `successurl`, you can't rely on it alone. Additionally, PAYONE will sent a transaction status notification to the shop to indicate that the payment transaction has been completed. When verifying the transaction status take care to validate the key and probably the source IPv4 subnet as well. However, you won't receive a `txaction=paid` notification right away but rather a `txaction=appointed` to indicate that the transaction has been triggered and will be marked paid in a couple of minutes:
 ```php
@@ -195,7 +195,7 @@ if ($_POST["key"] == hash("md5", $defaults["key"])) {
 }
 ```
 
-##Credit Card Payments
+## Credit Card Payments
 
 Online payments with credit cards are de facto mandatory for every online shop. However, the credit card issuers have high requirements concerning the security of credit card transactions. The [Payment Card Industry Data Security Standard](https://www.pcisecuritystandards.org/minisite/en/) (PCI DSS) defines the prerequisites and certification steps. As certification is quite complex for merchants, PAYONE developed a solution that only requires the lowest level of PCI DSS compliance.
 Essentially, processing a credit card transaction is a three step process:
@@ -207,7 +207,7 @@ Essentially, processing a credit card transaction is a three step process:
 The token is a so called pseudo card PAN, a number that resembles a credit card number, so that 3rd party systems can use it, but doesn't entail the PCI DSS requirements for storing card data.
 To avoid the software on the server to come in contact with credit card data, the Client API is used for communication between the buyer's browser and PAYONE.
 
-##Build the form
+## Build the form
 PAYONE's "Hosted iFrame" solution gives the merchant the most flexibility in designing the checkout form while at the same time being PCI DSS compliant. The actual `<input>` elements are loaded from a secure PAYONE system so that the shop software itself isn't in the scope of PCI DSS certification. First, we need a sceleton of the form:
 ```html
 <script type="text/javascript" src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js"></script>
@@ -337,7 +337,7 @@ To configure the appearance of the various form elements delivered by PAYONE, a 
 ```
 After the check has gone through, the pseudo card PAN and truncated card PAN (e.g. 4111xxxxxxxx1111) will be stored in the hidden input fields and submitted to your application through http post.
 
-##(Pre-)authorizing credit card transactions
+## (Pre-)authorizing credit card transactions
 After you have obtained the pseudo card PAN through the Client API channel, the rest of the transaction can be continued through the Server API channel following the scheme above:
 ```php
 $creditCard = array(
@@ -367,11 +367,11 @@ If the card requires 3D Secure verification, our platform will respond with a `s
 
 After the preauthorization is completed, you can continue with the transaction e.g. by capturing the full or a partial amount.
 
-##Examples
+## Examples
 
 There are some handy examples in the [examples folder](https://github.com/fjbender/simple-php-integration/tree/master/examples). You're welcome to add more, if you feel like it!
 
-##Try it out
+## Try it out
 
 If you want to try out the examples provided here with your own account credentials, please install the required libraries through composer first:
 
@@ -382,3 +382,4 @@ composer install
 ```
 
 Then, adapt the individual files in `examples/` to your needs. 
+
