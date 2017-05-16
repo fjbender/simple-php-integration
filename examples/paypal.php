@@ -1,18 +1,7 @@
 <?php
 include('../Payone.php');
 
-/**
- * @TODO: Define $defaults array() here
- */
-$defaults = array(
-    "aid" => "your_account_id",
-    "mid" => "your_merchant_id",
-    "portalid" => "your_portal_id",
-    "key" => hash("md5", "your_secret_portal_key"), // the key has to be hashed as md5
-    "api_version" => "3.10",
-    "mode" => "test", // can be "live" for actual transactions
-    "encoding" => "UTF-8"
-);
+require_once 'config.php';
 
 $personalData = array(
     "salutation" => "Herr",
@@ -37,11 +26,12 @@ $parameters = array(
     "clearingtype" => "wlt", // wallet clearing type
     "wallettype" => "PPE", // PPE for Paypal
     "amount" => "100000",
+    'currency' => 'EUR',
     "reference" => uniqid(),
     "narrative_text" => "Just an order",
-    "successurl" => "https://yourshop/payment/success?reference=your_unique_reference",
-    "errorurl" => "https://yourshop/payment/error?reference=your_unique_reference",
-    "backurl" => "https://yourshop/payment/back?reference=your_unique_reference",
+    "successurl" => "https://yourshop.de/payment/success?reference=your_unique_reference",
+    "errorurl" => "https://yourshop.de/payment/error?reference=your_unique_reference",
+    "backurl" => "https://yourshop.de/payment/back?reference=your_unique_reference",
 );
 
 $request = array_merge($defaults, $parameters, $personalData);
