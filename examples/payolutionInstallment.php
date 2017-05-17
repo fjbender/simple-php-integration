@@ -1,18 +1,7 @@
 <?php
 include('../Payone.php');
 
-/**
- * @TODO: Define $defaults array() here
- */
-$defaults = array(
-    "aid" => "your_account_id",
-    "mid" => "your_merchant_id",
-    "portalid" => "your_portal_id",
-    "key" => hash("md5", "your_secret_portal_key"), // the key has to be hashed as md5
-    "api_version" => "3.10",
-    "mode" => "test", // can be "live" for actual transactions
-    "encoding" => "UTF-8"
-);
+require_once 'config.php';
 
 $personalData = array(
     "salutation" => "Herr",
@@ -44,7 +33,8 @@ $genericPayment = array(
     "request" => "genericpayment",
     "clearingtype" => "fnc",
     "financingtype" => "PYS",
-    "amount" => "10000"
+    "amount" => "10000",
+    'currency' => 'EUR'
 );
 
 $request = array_merge($defaults, $personalData, $genericPayment);
@@ -66,6 +56,7 @@ $parameters = array(
     "clearingtype" => "fnc",
     "financingtype" => "PYS",
     "amount" => "10000",
+    'currency' => 'EUR',
     "reference" => uniqid(),
     "add_paydata[installment_duration]" => $response["add_paydata[PaymentDetails_1_Duration]"], // from calculation
 );
@@ -105,6 +96,7 @@ $parameters = array(
     "request" => "capture",
     "txid" => $response["txid"],
     "amount" => "10000",
+    'currency' => 'EUR',
     "capturemode" => "completed"
 );
 
