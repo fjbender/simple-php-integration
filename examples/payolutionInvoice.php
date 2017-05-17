@@ -1,24 +1,14 @@
 <?php
 include('../Payone.php');
 
-/**
- * @TODO: Define $defaults array() here
- */
-$defaults = array(
-    "aid" => "your_account_id",
-    "mid" => "your_merchant_id",
-    "portalid" => "your_portal_id",
-    "key" => hash("md5", "your_secret_portal_key"), // the key has to be hashed as md5
-    "api_version" => "3.8",
-    "mode" => "test", // can be "live" for actual transactions
-    "encoding" => "UTF-8"
-);
+require_once 'config.php';
 
 $parameters = array(
     "request" => "preauthorization",
     "clearingtype" => "fnc",
     "financingtype" => "PYV",
     "amount" => "100000",
+    'currency' => 'EUR',
     "reference" => uniqid(),
     "narrative_text" => "A nice and innocent Payolution order",
 );
@@ -69,7 +59,8 @@ $genericPayment = array(
     "request" => "genericpayment",
     "clearingtype" => "fnc",
     "financingtype" => "PYV",
-    "amount" => "100000"
+    "amount" => "100000",
+    'currency' => 'EUR'
 );
 
 /**
@@ -104,6 +95,7 @@ $parameters = array(
     "request" => "capture",
     "txid" => $response["txid"],
     "amount" => "100000",
+    'currency' => 'EUR',
     "capturemode" => "completed",
     "sequencenumber" => "1"
 );

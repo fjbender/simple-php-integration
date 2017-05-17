@@ -1,6 +1,6 @@
 <?php
 include('../Payone.php');
-
+require_once 'config.php';
 /**
  * Please note:
  * In an actual implementation of RatePay, device fingerprinting has to be performed.
@@ -8,7 +8,7 @@ include('../Payone.php');
  * This script assumes $deviceIdentToken to contain something meaningful
  */
 
-$deviceIdentToken = "HereBeDragons.";
+$deviceIdentToken = "b4115d2b8b79c157b09aedb08f91d2980fc7058f692aeb5279ba49aef7737fa211107ad5634a98f70fc44dae1a7c28fc";
 
 /**
  * Please note:
@@ -18,20 +18,7 @@ $deviceIdentToken = "HereBeDragons.";
  * using the genericpayment[action=profile] request, cf. Server API description for details.
  */
 
-$shopId = "12345678";
-
-/**
- * @TODO: Define $defaults array() here
- */
-$defaults = array(
-    "aid" => "your_account_id",
-    "mid" => "your_merchant_id",
-    "portalid" => "your_portal_id",
-    "key" => hash("md5", "your_secret_portal_key"), // the key has to be hashed as md5
-    "api_version" => "3.10",
-    "mode" => "test", // can be "live" for actual transactions
-    "encoding" => "UTF-8"
-);
+$shopId = "88880103";
 
 /**
  * The decision whether the financing will be calculated by the monthly amount to pay or the total running time
@@ -42,6 +29,7 @@ $defaults = array(
 $parameters = array(
 	"request" => "genericpayment",
 	"amount" => "100000",
+    'currency' => 'EUR',
 	"add_paydata[action]" => "calculation",
 	"add_paydata[shop_id]" => $shopId,
 	"clearingtype" => "fnc",
@@ -75,14 +63,15 @@ $parameters = array(
 	"add_paydata[debit_paytype]" => "BANK-TRANSFER",
 	"add_paydata[installment_amount]" => $response['add_paydata[rate]'],
 	"add_paydata[last_installment_amount]" => $response['add_paydata[last-rate]'],
-	"add_paydata[installment_number]" => $response['add_paydata[number-of-rates]'],	
+	"add_paydata[installment_number]" => $response['add_paydata[number-of-rates]'],
 	"add_paydata[amount]" => $response['add_paydata[total-amount]'],
 	"add_paydata[interest_rate]" => $response['add_paydata[interest-rate]'] * 100,		// floats are not accepted here
 	"add_paydata[payment_firstday]" => $response['add_paydata[payment-firstday]'],
 	"clearingtype" => "fnc",
 	"financingtype" => "RPS",
 	"amount" => "10000",
-	"add_paydata[customer_allow_credit_inquiry]" => "yes",
+    'currency' => 'EUR',
+    "add_paydata[customer_allow_credit_inquiry]" => "yes",
 	"add_paydata[device_token]" => $deviceIdentToken,
 	"reference" => substr($deviceIdentToken, 0, 20),
 	//"iban" => "DE00123456871234679800",   // for add_paydata[debit_paytype] => "DIRECT-DEBIT", IBAN and BIC are needed
@@ -97,7 +86,7 @@ $personalData = array(
     "street" => "Fraunhofer Straße 2-4",
     "addressaddition" => "EG",
     "zip" => "24118",
-    "city" => "TESTHAUSEN",
+    "city" => "Kiel",
     "country" => "DE",
     "email" => "paul.neverpayer@payone.de",
     "telephonenumber" => "043125968533",
@@ -149,7 +138,8 @@ $parameters = array(
 	"request" => "capture",
 	"txid" => $response["txid"],
 	"amount" => "10000",
-	"capturemode" => "completed",
+    'currency' => 'EUR',
+    "capturemode" => "completed",
 	"add_paydata[shop_id]" => "88880103"
 );
 
