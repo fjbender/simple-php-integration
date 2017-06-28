@@ -3,7 +3,7 @@
 ## Prerequisites
 * PHP 5.4 or higher (https://secure.php.net/)
 * Composer (https://getcomposer.org/download/)
-* A PAYONE account or test account (https://www.payone.de/kontakt/)
+* A PAYONE account or test account (https://www.payone.com/kontakt/)
 
 ## Communication principles
 
@@ -154,9 +154,9 @@ $onlineTransfer = array(
      */
     //"iban" => "DE85123456782599100003", 
     //"bic" => "TESTTEST",
-    "successurl" => "https://yourshop/payment/success?reference=your_unique_reference",
-    "errorurl" => "https://yourshop/payment/error?reference=your_unique_reference",
-    "backurl" => "https://yourshop/payment/back?reference=your_unique_reference"
+    "successurl" => "https://yourshop.com/payment/success?reference=your_unique_reference",
+    "errorurl" => "https://yourshop.com/payment/error?reference=your_unique_reference",
+    "backurl" => "https://yourshop.com/payment/back?reference=your_unique_reference"
 );
 ```
 As a change, we'll be using `"request" => "authorization"` here, which means that not only the account receivable is created but also instantly booked. This is possible because Sofort.com provides instant notification about a successful payment and it saves you the hassle of implementing a separate `"request" => "capture"`. For rather asynchronous payment methods like prepayment or invoice this is not possible. Refer to the Server API Description for details. However, you are free to use a preauthorization/capture setup here as well if you see fit, for instance for bookkeeping reasons.
@@ -346,9 +346,9 @@ $creditCard = array(
     "amount" => "10000", // amount in smallest currency unit, i.e. cents
     "currency" => "EUR",
     "request" => "preauthorization",
-    "successurl" => "https://yourshop/payment/success?reference=your_unique_reference", // URLs might be necessary since some cards require REDIRECT for 3d secure
-    "errorurl" => "https://yourshop/payment/error?reference=your_unique_reference",
-    "backurl" => "https://yourshop/payment/back?reference=your_unique_reference",
+    "successurl" => "https://yourshop.com/payment/success?reference=your_unique_reference", // URLs might be necessary since some cards require REDIRECT for 3d secure
+    "errorurl" => "https://yourshop.com/payment/error?reference=your_unique_reference",
+    "backurl" => "https://yourshop.com/payment/back?reference=your_unique_reference",
     "pseudocardpan" => $pseudocardpan // pseudo card pan received from previous checkout steps, no other card details required
 );
 
