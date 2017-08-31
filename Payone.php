@@ -72,7 +72,7 @@ class Payone {
     public static function parseResponse(\Psr\Http\Message\ResponseInterface $response)
     {
         $responseArray = array();
-        $explode = explode(PHP_EOL, $response->getBody());
+        $explode = explode("\n", $response->getBody());
         foreach ($explode as $e) {
             $keyValue = explode("=", $e);
             if (trim($keyValue[0]) != "") {
