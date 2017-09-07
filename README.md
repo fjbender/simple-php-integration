@@ -1,6 +1,6 @@
 # A simple PAYONE integration in PHP
 
-##Table of Contents
+## Table of Contents
 
 * [Prerequisites](#prerequisites)
 * [Communication principles](#communication-principles)
