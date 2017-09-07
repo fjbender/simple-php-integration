@@ -1,5 +1,24 @@
 # A simple PAYONE integration in PHP
 
+##Table of Contents
+
+* [Prerequisites](#prerequisites)
+* [Communication principles](#communication-principles)
+  * [Default parameters](#default-parameters)
+  * [Initiating a payment request](#initiating-a-payment-request)
+  * [Waiting for payment confirmation](#waiting-for-payment-confirmation)
+  * [Booking the amount, capturing the funds](#booking-the-amount-capturing-the-funds)
+* [Where to go from here](#where-to-go-from-here)
+* [Redirect payment methods](#redirect-payment-methods)
+  * [Preparing the authorization](#preparing-the-authorization)
+  * [Sending the authorization and redirecting the customer](#sending-the-authorization-and-redirecting-the-customer)
+  * [Making sure everything is present and accounted for](#making-sure-everything-is-present-and-accounted-for)
+* [Credit Card Payments](#credit-card-payments)
+  * [Build the form](#build-the-form)
+  * [(Pre-)authorizing credit card transactions](#pre-authorizing-credit-card-transactions)
+* [Examples](#examples)
+* [Try it out](#try-it-out)
+
 ## Prerequisites
 * PHP 5.4 or higher (https://secure.php.net/)
 * Composer (https://getcomposer.org/download/)
