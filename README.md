@@ -181,6 +181,18 @@ $onlineTransfer = array(
 As a change, we'll be using `"request" => "authorization"` here, which means that not only the account receivable is created but also instantly booked. This is possible because Sofort.com provides instant notification about a successful payment and it saves you the hassle of implementing a separate `"request" => "capture"`. For rather asynchronous payment methods like prepayment or invoice this is not possible. Refer to the Server API Description for details. However, you are free to use a preauthorization/capture setup here as well if you see fit, for instance for bookkeeping reasons.
 The URL parameters determine to which page the customer gets redirected as soon as they a) complete the transaction (successurl), b) the transaction fails (errorurl) and the customer is advised to choose a different payment method or try again, or c) the customer hits "Back to shop" or any similar button on the 3rd party site to get back to the payment method selector (backurl). These controllers need to be implemented by you.
 
+## On authorization and preauthorization
+
+The main difference between authorization and preauthorization is, that with authorization the funds are due instantly, while with preauthorization it is merely an "arrangement to pay". Funds in the preauthorization mode are due when a capture call is sent. With certain payment methods, the preauthorized funds are reserved (e.g. on a credit card), this is, however, not always the case. The time of the capture has implications on e.g. the dunning process as well.
+
+To make a better example:
+
+Imagine a standard fashion retailer. They would normally use a preauthorization workflow. The amount of the order is preauthorized when the customer finishes their checkout. When the goods are shipped (maybe partially, as not all items might be in stock), a capture API call is sent to indicate the funds are due now. There can be more than one capture call for a single preauthorization.
+
+On the other hand, a merchant of digital content (e.g. e-books) would typically use an authorization flow to be able to make the goods available immediately.
+
+In a typical integration, the merchant would be able to configure in their backend, which mode to use in which setting for which payment method.
+
 ## Sending the authorization and redirecting the customer
 Once you have prepared all the parameters needed for that transaction you're ready to authorize the transaction and then redirect the customer. We'll merge the arrays into one request, send the request to PAYONE, and see whether we get a status=REDIRECT response:
 ```php
