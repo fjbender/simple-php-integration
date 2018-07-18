@@ -47,10 +47,11 @@ print_r($request);
  * Array
  * (
  *   [status] => REDIRECT
- *   [redirecturl] => https://www.sofort.com/payment/go/7904xxxxxxxxxxxxxxxxxxxxeeca29ec9d8c7912
+ *   [redirecturl] => https://trusted.girogate.de/ti/dumbdummy?tx=XXXXXXXXX&rs=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXcc85f42
  *   [txid] => 211111111
  *   [userid] => 9000000
  * )
+ * please note that the redirecturl is likely to change in live mode.
  */
 $response = Payone::sendRequest($request);
 print_r($response);
