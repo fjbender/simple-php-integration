@@ -39,18 +39,35 @@ class Payone {
      * performing the curl POST request to the PAYONE platform
      *
      * @param array $request
+     * @param string $responsetype
      * @throws Exception
-     * @return array
+     * @return array or string
      */
-    public static function sendRequest($request)
+    public static function sendRequest($request, $responsetype = "")
     {
-        $client = new \GuzzleHttp\Client();
+        if ($responsetype === "json") {
+            // appends the accept: application/json header to the request
+            // This is used to retrieve structured JSON in the response
+            $client = new \GuzzleHttp\Client(['headers' => ['accept' => 'application/json']]);
+        }
+        else {
+            // if $responsetype is set to anything else than "json", use the standard request
+            $client = new \GuzzleHttp\Client();
+        }
 
         echo "Requesting...";
         $begin = microtime(true);
 
         if ($response = $client->request('POST', self::PAYONE_SERVER_API_URL, ['form_params' => $request])) {
-            $return = self::parseResponse($response);
+
+            if (implode($response->getHeader('Content-Type')) == 'text/plain; charset=UTF-8'){
+                // if the content type is text/plain, parse response into array
+                $return = self::parseResponse($response);
+            } else {
+                // if the content type is anything else, just return the response body as string
+                $return = (string) $response->getBody();
+            }
+
         } else {
             throw new Exception('Something went wrong during the HTTP request.');
         }
