@@ -43,7 +43,7 @@ class Payone {
      * @param string $responsetype
      * @throws Exception
      * @return array|\Psr\Http\Message\StreamInterface Returns an array of response
-           parameters in "classic" mode, a Stream for any other mode.
+     *     parameters in "classic" mode, a Stream for any other mode.
      */
     public static function sendRequest($request, $responsetype = "")
     {
