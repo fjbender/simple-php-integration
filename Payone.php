@@ -17,10 +17,11 @@
  * along with Payone Connector. If not, see <http://www.gnu.org/licenses/>.
  *
  * @package Simple PHP Integration
- * @link http://www.payone.de
- * @copyright (C) PAYONE GmbH 2016
- * @author Florian Bender <florian.bender@payone.de>
- * @author Timo Kuchel <timo.kuchel@payone.de>
+ * @link https://www.bspayone.com/
+ * @copyright (C) BS PAYONE GmbH 2016, 2018
+ * @author Florian Bender <florian.bender@bspayone.com>
+ * @author Timo Kuchel <timo.kuchel@bspayone.com>
+ * @author Hannes Reinberger <hannes.reinberger@bspayone.com>
  */
 
 require 'vendor/autoload.php';
@@ -36,12 +37,13 @@ class Payone {
     const PAYONE_SERVER_API_URL = 'https://api.pay1.de/post-gateway/';
 
     /**
-     * performing the curl POST request to the PAYONE platform
+     * performing the HTTP POST request to the PAYONE platform
      *
      * @param array $request
      * @param string $responsetype
      * @throws Exception
-     * @return array or string
+     * @return array|\Psr\Http\Message\StreamInterface Returns an array of response
+           parameters in "classic" mode, a Stream for any other mode.
      */
     public static function sendRequest($request, $responsetype = "")
     {
@@ -64,8 +66,8 @@ class Payone {
                 // if the content type is text/plain, parse response into array
                 $return = self::parseResponse($response);
             } else {
-                // if the content type is anything else, just return the response body as string
-                $return = (string) $response->getBody();
+                // if the content type is anything else, just return the response body
+                $return = $response->getBody();
             }
 
         } else {
