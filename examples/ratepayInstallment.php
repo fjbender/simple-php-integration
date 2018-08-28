@@ -27,17 +27,17 @@ $shopId = "88880103";
  * Subsequently, the genericpayment[action=calculation] request has to be fired in the background
  */
 $parameters = array(
-	"request" => "genericpayment",
-	"amount" => "100000",
+    "request" => "genericpayment",
+    "amount" => "100000",
     'currency' => 'EUR',
-	"add_paydata[action]" => "calculation",
-	"add_paydata[shop_id]" => $shopId,
-	"clearingtype" => "fnc",
-	"financingtype" => "RPS",
-	"add_paydata[customer_allow_credit_inquiry]" => "yes",
-	"add_paydata[calculation_type]" => "calculation-by-rate", // or "calculation-by-time"
-	//"add_paydata[month]" => "12" // for calculation-by-time, gives the number of months the credit will be running
-	"add_paydata[rate]" => "1000" // the monthly rate the customer is willing to pay
+    "add_paydata[action]" => "calculation",
+    "add_paydata[shop_id]" => $shopId,
+    "clearingtype" => "fnc",
+    "financingtype" => "RPS",
+    "add_paydata[customer_allow_credit_inquiry]" => "yes",
+    "add_paydata[calculation_type]" => "calculation-by-rate", // or "calculation-by-time"
+    //"add_paydata[month]" => "12" // for calculation-by-time, gives the number of months the credit will be running
+    "add_paydata[rate]" => "1000" // the monthly rate the customer is willing to pay, in cents
 );
 
 
@@ -58,25 +58,25 @@ sleep(3);
  * After the customer reached the final step of the checkout and clicks the order button, the preauth is fired
  */
 $parameters = array(
-	"request" => "preauthorization",
-	"add_paydata[shop_id]" => $shopId,
-	"add_paydata[debit_paytype]" => "BANK-TRANSFER",
-	"add_paydata[installment_amount]" => $response['add_paydata[rate]'],
-	"add_paydata[last_installment_amount]" => $response['add_paydata[last-rate]'],
-	"add_paydata[installment_number]" => $response['add_paydata[number-of-rates]'],
-	"add_paydata[amount]" => $response['add_paydata[total-amount]'],
-	"add_paydata[interest_rate]" => $response['add_paydata[interest-rate]'] * 100,		// floats are not accepted here
-	"add_paydata[payment_firstday]" => $response['add_paydata[payment-firstday]'],
-	"clearingtype" => "fnc",
-	"financingtype" => "RPS",
-	"amount" => "10000",
+    "request" => "preauthorization",
+    "add_paydata[shop_id]" => $shopId,
+    "add_paydata[debit_paytype]" => "BANK-TRANSFER",
+    "add_paydata[installment_amount]" => $response['add_paydata[rate]'] * 100, // weirdly, no floats here
+    "add_paydata[last_installment_amount]" => $response['add_paydata[last-rate]'] * 100, // dito
+    "add_paydata[installment_number]" => $response['add_paydata[number-of-rates]'],
+    "add_paydata[amount]" => $response['add_paydata[total-amount]'] * 100, // dito
+    "add_paydata[interest_rate]" => $response['add_paydata[interest-rate]'] * 100,        // floats are not accepted here
+    "add_paydata[payment_firstday]" => $response['add_paydata[payment-firstday]'],
+    "clearingtype" => "fnc",
+    "financingtype" => "RPS",
+    "amount" => "10000",
     'currency' => 'EUR',
     "add_paydata[customer_allow_credit_inquiry]" => "yes",
-	"add_paydata[device_token]" => $deviceIdentToken,
-	"reference" => substr($deviceIdentToken, 0, 20),
-	//"iban" => "DE00123456871234679800",   // for add_paydata[debit_paytype] => "DIRECT-DEBIT", IBAN and BIC are needed
-	//"bic" => "TESTTEST"                   // This paytype means, that instead of wiring the amount to RatePay every
-                                            // month, a SEPA Direct Debit is performed on the buyer's account.
+    "add_paydata[device_token]" => $deviceIdentToken,
+    "reference" => substr($deviceIdentToken, 0, 20),
+    //"iban" => "DE00123456871234679800",   // for add_paydata[debit_paytype] => "DIRECT-DEBIT", IBAN and BIC are needed
+    //"bic" => "TESTTEST"                   // This paytype means, that instead of wiring the amount to RatePay every
+    // month, a SEPA Direct Debit is performed on the buyer's account.
 );
 $personalData = array(
     "salutation" => "Herr",
@@ -107,7 +107,7 @@ $articles = array(
     'pr[2]' => '1100',
     'no[2]' => '1',
     'va[2]' => '19',
-	'de[3]' => 'Gutschein',
+    'de[3]' => 'Gutschein',
     'it[3]' => 'voucher',
     'id[3]' => 'GUT100',
     'pr[3]' => '-100',
@@ -135,12 +135,12 @@ sleep(3);
  * Send the capture when the package leaves the warehouse to trigger the dunning process.
  */
 $parameters = array(
-	"request" => "capture",
-	"txid" => $response["txid"],
-	"amount" => "10000",
+    "request" => "capture",
+    "txid" => $response["txid"],
+    "amount" => "10000",
     'currency' => 'EUR',
     "capturemode" => "completed",
-	"add_paydata[shop_id]" => "88880103"
+    "add_paydata[shop_id]" => "88880103"
 );
 
 $request = array_merge($defaults, $parameters, $articles);
