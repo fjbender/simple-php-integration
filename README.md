@@ -42,10 +42,14 @@ $defaults = array(
     "key" => hash("md5", "your_secret_portal_key"), // the key has to be hashed as md5
     "api_version" => "3.8",
     "mode" => "test", // can be "live" for actual transactions
-    "encoding" => "UTF-8"
+    "encoding" => "UTF-8",
+    "integrator_name" => "name_of_the_surrounding_application",
+    "integrator_version" => "version_of_the_surrounding_application",
+    "solution_name" => "your_name_here",
+    "solution_version" => "version_of_the_payone_integration"
 );
 ```
-These parameters identify you as a merchant and ensure that only authorized API requests are processed by our platform.
+These parameters identify you as a merchant and ensure that only authorized API requests are processed by our platform. The `integrator_*` and `solution_*` parameters provide us with statistical data, which integrations are in use and where.
 Additionally, some information about the customer can be transmitted, for instance received from your shop application or ERP system:
 ```php
 $personalData = array(
