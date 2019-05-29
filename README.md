@@ -1,3 +1,8 @@
+> **PLEASE NOTE**
+> This repository is deprecated and will not be updated.
+> Please see https://docs.payone.com/display/public/INT/A+Simple+PAYONE+Integration+in+PHP for the current guide
+
+
 # A simple PAYONE integration in PHP
 
 ## Table of Contents
